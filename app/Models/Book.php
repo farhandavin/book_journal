@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Book extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'title',
+        'author',
+        'category',
+        'isbn',
+        'rating',
+        'notes',
+        'date_read',
+        'sentiment',
+        'stock',         // Tambahkan jika belum ada
+        'cover_image'
+    ];
+
+    // Relasi ke peminjaman
+    public function borrowings()
+    {
+        return $this->hasMany(Borrowing::class);
+    }
+
+    // Relasi ke pemilik buku (User)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Cek apakah buku sedang dipinjam oleh siapapun
+   public function isBorrowed()
+{
+    return $this->borrowings()
+                ->whereIn('status', ['pending', 'dipinjam'])
+                ->exists();
+}
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    // Menghitung rata-rata rating otomatis
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
+
+    // Casting agar date_read dibaca sebagai format tanggal oleh Carbon
+    protected $casts = [
+        'date_read' => 'date',
+    ];
+}

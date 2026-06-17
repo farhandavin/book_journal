@@ -24,6 +24,19 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Dedicated testing route for Lighthouse (no query parameters needed)
+Route::get('/dashboard-test', function () {
+    // Inject a dummy user so the dashboard view doesn't crash when calling Auth::user()->name
+    if (!Auth::check()) {
+        $dummyUser = new \App\Models\User();
+        $dummyUser->id = 9999;
+        $dummyUser->name = 'Tester Lighthouse';
+        $dummyUser->email = 'tester@example.com';
+        Auth::setUser($dummyUser);
+    }
+    return view('dashboard');
+})->name('dashboard.test');
+
 // --- Group Middleware Auth (Fitur untuk User Login) ---
 Route::middleware(['auth'])->group(function () {
 

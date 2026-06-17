@@ -21,7 +21,7 @@
                         {{ __('Rekomendasi AI') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('books.add')" :active="request()->routeIs('books.add')" class="text-gray-600 hover:text-black">
+                    <x-nav-link :href="route('book.add')" :active="request()->routeIs('book.add')" class="text-gray-600 hover:text-black">
                         {{ __('Tambahkan buku') }}
                     </x-nav-link>
 
@@ -63,7 +63,7 @@
             <x-responsive-nav-link :href="route('ai.index')" :active="request()->routeIs('ai.*')">
                 {{ __('Rekomendasi AI') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('books.add')" :active="request()->routeIs('books.add')">
+            <x-responsive-nav-link :href="route('book.add')" :active="request()->routeIs('book.add')">
                 {{ __('Tambahkan buku') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="url('/')">

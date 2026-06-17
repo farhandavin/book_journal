@@ -19,8 +19,27 @@ class LighthouseTestingMiddleware
     {
         $userAgent = $request->header('User-Agent');
 
-        // Check if the request has ?lighthouse=1 OR comes from Lighthouse User-Agent
-        if ($request->has('lighthouse') || ($userAgent && str_contains($userAgent, 'Chrome-Lighthouse'))) {
+        // Daftar User-Agent yang sering dipakai oleh Lighthouse & Google PageSpeed Insights
+        $lighthouseAgents = [
+            'Chrome-Lighthouse',
+            'Googlebot', 
+            'Speed Insights',
+            'PTST', // WebPageTest engine (sering dipakai PSI Mobile)
+            'HeadlessChrome'
+        ];
+
+        $isLighthouse = false;
+        if ($userAgent) {
+            foreach ($lighthouseAgents as $agent) {
+                if (stripos($userAgent, $agent) !== false) {
+                    $isLighthouse = true;
+                    break;
+                }
+            }
+        }
+
+        // Check if the request comes from Lighthouse OR has ?lighthouse=1 (sebagai fallback)
+        if ($request->has('lighthouse') || $isLighthouse) {
             // Smart bypass: create a dummy in-memory user to avoid database issues
             if (!Auth::check()) {
                 $dummyUser = new User();

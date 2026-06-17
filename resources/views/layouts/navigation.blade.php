@@ -32,6 +32,7 @@
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                @auth
                 {{-- Logout Button Red --}}
                 <form method="POST" action="{{ route('logout') }}" id="logout-form-desktop">
                     @csrf
@@ -39,6 +40,10 @@
                         {{ __('Logout') }} ({{ Auth::user()->name }})
                     </button>
                 </form>
+                @else
+                <a href="{{ route('login') }}" class="text-gray-600 hover:text-black mr-4 font-medium">Log in</a>
+                <a href="{{ route('register') }}" class="btn bg-blue-600 text-white hover:bg-blue-700 border-transparent rounded-md text-sm font-medium transition px-4 py-2">Register</a>
+                @endauth
             </div>
 
             <div class="-me-2 flex items-center sm:hidden">
@@ -72,6 +77,7 @@
         </div>
 
         <div class="pt-4 pb-4 border-t border-gray-200">
+            @auth
             <div class="px-4 mb-3">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
@@ -85,6 +91,12 @@
                     </button>
                 </form>
             </div>
+            @else
+            <div class="px-4 flex flex-col gap-2">
+                <a href="{{ route('login') }}" class="w-full text-center bg-gray-100 text-gray-800 rounded-md py-2 text-sm font-medium hover:bg-gray-200 transition">Log in</a>
+                <a href="{{ route('register') }}" class="w-full text-center bg-blue-600 text-white rounded-md py-2 text-sm font-medium hover:bg-blue-700 transition">Register</a>
+            </div>
+            @endauth
         </div>
     </div>
 </nav>
@@ -95,7 +107,7 @@
         
         // Mockup Text: "Anda login sebagai [Name]... Apakah Anda yakin ingin logout?"
         // We can inject the name from Blade since this script is inside the blade file
-        const userName = "{{ Auth::user()->name }}"; 
+        const userName = "{{ Auth::user()?->name ?? 'Guest' }}"; 
         
         if (typeof Swal === 'undefined') {
             if(confirm(`Konfirmasi Logout\n\nAnda login sebagai ${userName}.\nApakah Anda yakin ingin logout?`)) { 

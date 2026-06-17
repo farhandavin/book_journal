@@ -11,7 +11,7 @@
             {{-- Welcome Banner --}}
             <div class="bg-gradient-to-r from-blue-600 to-blue-400 p-8 rounded-2xl shadow-xl flex flex-col md:flex-row md:items-center md:justify-between text-white">
                 <div>
-                    <h1 class="text-3xl font-bold">Selamat Datang, {{ Auth::user()->name }}! 👋</h1>
+                    <h1 class="text-3xl font-bold">Selamat Datang, {{ Auth::user()?->name ?? 'Tamu' }}! 👋</h1>
                     <p class="mt-2 text-blue-100 text-lg">Senang melihat Anda kembali di SmartBook. Apa rencana bacaan Anda hari ini?</p>
                 </div>
                 <div class="mt-6 md:mt-0">

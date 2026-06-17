@@ -1,50 +1,44 @@
-<nav x-data="{ open: false }" class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-white sticky top-0 z-40 border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="font-bold text-xl tracking-tighter text-black">
-                        BookJournal.
+                    <a href="{{ route('dashboard') }}" class="font-bold text-xl tracking-tighter text-blue-600">
+                        smartbook
                     </a>
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-gray-600 hover:text-black">
-                        {{ __('Dashboard') }}
+                    <x-nav-link :href="route('borrowings.index')" :active="request()->routeIs('borrowings.*')" class="text-gray-600 hover:text-black">
+                        {{ __('Peminjaman buku saya') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('events.index')" :active="request()->routeIs('events.index')" class="text-gray-600 hover:text-black">
-                        {{ __('Events') }}
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-gray-600 hover:text-black">
+                        {{ __('Beranda') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('ai.index')" :active="request()->routeIs('ai.*')" class="text-gray-600 hover:text-black">
+                        {{ __('Rekomendasi AI') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('books.add')" :active="request()->routeIs('books.add')" class="text-gray-600 hover:text-black">
+                        {{ __('Tambahkan buku') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="url('/')" :active="request()->is('/')" class="text-gray-600 hover:text-black">
+                        {{ __('Home') }}
                     </x-nav-link>
                 </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-transparent hover:text-black focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <form method="POST" action="{{ route('logout') }}" id="logout-form">
-                            @csrf
-                            <x-dropdown-link :href="route('logout')" onclick="confirmLogout(event, 'logout-form')">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
+                {{-- Logout Button Red --}}
+                <form method="POST" action="{{ route('logout') }}" id="logout-form-desktop">
+                    @csrf
+                    <button type="submit" onclick="confirmLogout(event, 'logout-form-desktop')" class="btn bg-red-700 text-white hover:bg-red-800 focus:bg-red-800 active:bg-red-900 border-transparent rounded-md text-sm font-medium transition duration-150 ease-in-out px-4 py-2">
+                        {{ __('Logout') }} ({{ Auth::user()->name }})
+                    </button>
+                </form>
             </div>
 
             <div class="-me-2 flex items-center sm:hidden">
@@ -58,32 +52,37 @@
         </div>
     </div>
 
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden border-t border-gray-100">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden border-t border-gray-200">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            <x-responsive-nav-link :href="route('borrowings.index')" :active="request()->routeIs('borrowings.*')">
+                {{ __('Peminjaman buku saya') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('events.index')" :active="request()->routeIs('events.index')">
-                {{ __('Events') }}
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                {{ __('Beranda') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('ai.index')" :active="request()->routeIs('ai.*')">
+                {{ __('Rekomendasi AI') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('books.add')" :active="request()->routeIs('books.add')">
+                {{ __('Tambahkan buku') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="url('/')">
+                {{ __('Home') }}
             </x-responsive-nav-link>
         </div>
 
-        <div class="pt-4 pb-1 border-t border-gray-100">
-            <div class="px-4">
+        <div class="pt-4 pb-4 border-t border-gray-200">
+            <div class="px-4 mb-3">
                 <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
 
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <form method="POST" action="{{ route('logout') }}" id="logout-form-mobile">
+            <div class="px-4">
+                 <form method="POST" action="{{ route('logout') }}" id="logout-form-mobile">
                     @csrf
-                    <x-responsive-nav-link :href="route('logout')" onclick="confirmLogout(event, 'logout-form-mobile')">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
+                    <button type="submit" onclick="confirmLogout(event, 'logout-form-mobile')" class="w-full text-center bg-red-600 text-white rounded-md py-2 text-sm font-medium hover:bg-red-700 transition">
+                        {{ __('Logout') }}
+                    </button>
                 </form>
             </div>
         </div>
@@ -93,19 +92,32 @@
 <script>
     function confirmLogout(event, formId) {
         event.preventDefault();
+        
+        // Mockup Text: "Anda login sebagai [Name]... Apakah Anda yakin ingin logout?"
+        // We can inject the name from Blade since this script is inside the blade file
+        const userName = "{{ Auth::user()->name }}"; 
+        
         if (typeof Swal === 'undefined') {
-            if(confirm('Yakin ingin keluar?')) { document.getElementById(formId).submit(); }
+            if(confirm(`Konfirmasi Logout\n\nAnda login sebagai ${userName}.\nApakah Anda yakin ingin logout?`)) { 
+                document.getElementById(formId).submit(); 
+            }
             return;
         }
+        
+        // Custom HTML for SweetAlert2 to match mockup style if possible, or just standard
         Swal.fire({
-            title: 'Keluar?',
-            text: "Sampai jumpa lagi!",
-            icon: 'question',
+            title: 'Konfirmasi Logout',
+            html: `Anda login sebagai <b>${userName}</b><br>sejak {{ now()->format('H:i') }}<br><br>Apakah Anda yakin ingin logout?`,
+            icon: null,
             showCancelButton: true,
-            confirmButtonColor: '#000',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Keluar',
-            cancelButtonText: 'Batal'
+            confirmButtonColor: '#2563EB', // Blue for "Logout" in mockup (or Red?) Mockup says "Logout (Blue/Red)" actually mockup 12 shows Blue "Logout" and White "Batal", but the navbar button is Red. Let's make the confirm button Blue to match the modal mockup.
+            cancelButtonColor: '#E5E7EB', // Grey
+            confirmButtonText: 'Logout',
+            cancelButtonText: 'Batal',
+            customClass: {
+                cancelButton: 'text-gray-800',
+                confirmButton: 'bg-blue-600'
+            }
         }).then((result) => {
             if (result.isConfirmed) { document.getElementById(formId).submit(); }
         })

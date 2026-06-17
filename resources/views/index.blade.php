@@ -1,268 +1,167 @@
-@extends('layout')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Perpustakaan Digital') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-10 text-center sm:text-left">
-        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Perpustakaan Digital</h1>
-        <p class="mt-2 text-gray-500 text-lg">Temukan inspirasi dalam setiap halaman.</p>
-    </div>
-
-    <div class="mb-8 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-        <form action="{{ route('home') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center justify-between">
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                <div class="relative w-full sm:w-48">
-                    <select name="category" onchange="this.form.submit()" class="w-full pl-3 pr-10 py-2 text-sm border-gray-200 focus:border-black focus:ring-black rounded-lg shadow-sm cursor-pointer transition-colors hover:bg-gray-50">
-                        <option value="">Semua Kategori</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="relative w-full sm:w-48">
-                    <select name="sort" onchange="this.form.submit()" class="w-full pl-3 pr-10 py-2 text-sm border-gray-200 focus:border-black focus:ring-black rounded-lg shadow-sm cursor-pointer transition-colors hover:bg-gray-50">
-                        <option value="id" {{ request('sort') == 'id' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating Tertinggi</option>
-                        <option value="title" {{ request('sort') == 'title' ? 'selected' : '' }}>Judul (A-Z)</option>
-                    </select>
-                </div>
+            {{-- Header Section --}}
+            <div class="mb-10 text-center sm:text-left">
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Perpustakaan Digital</h1>
+                <p class="mt-2 text-gray-500 text-lg">Temukan inspirasi dalam setiap halaman.</p>
             </div>
 
-            <div class="flex gap-3 w-full md:w-auto justify-end">
-                <a href="{{ route('home') }}" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                    Reset
-                </a>
-                <a href="{{ route('book.export') }}" class="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-sm">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Export CSV
-                </a>
-            </div>
-        </form>
-    </div>
-
-    @if($books->count() > 0)
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @foreach($books as $book)
-                <div class="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full relative">
+            {{-- Filters & Controls --}}
+            <div class="mb-8 p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
+                <form action="{{ route('home') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center justify-between">
                     
-                    <div class="relative aspect-[2/3] overflow-hidden bg-gray-100 cursor-pointer" onclick="window.location='{{ route('book.show', $book->id) }}'">
-                        @if($book->cover_image)
-                            <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500">
-                        @else
-                            <img src="https://covers.openlibrary.org/b/isbn/{{ $book->isbn }}-L.jpg" alt="{{ $book->title }}" class="object-cover w-full h-full" onerror="this.onerror=null;this.src='https://via.placeholder.com/250x350?text=No+Cover';">
-                        @endif
-                        
-                        <div class="absolute top-3 left-3">
-                            <span class="px-2 py-1 text-xs font-medium bg-white/90 backdrop-blur-sm text-gray-800 rounded-md shadow-sm">
-                                {{ $book->category ?? 'Umum' }}
-                            </span>
+                    <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                        <div class="relative w-full sm:w-56">
+                            <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Kategori</label>
+                            <select name="category" onchange="this.form.submit()" class="w-full pl-3 pr-10 py-2.5 text-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm cursor-pointer transition-colors hover:bg-gray-50">
+                                <option value="">Semua Kategori</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="relative w-full sm:w-56">
+                            <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">Urutan</label>
+                            <select name="sort" onchange="this.form.submit()" class="w-full pl-3 pr-10 py-2.5 text-sm border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg shadow-sm cursor-pointer transition-colors hover:bg-gray-50">
+                                <option value="id" {{ request('sort') == 'id' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating Tertinggi</option>
+                                <option value="title" {{ request('sort') == 'title' ? 'selected' : '' }}>Judul (A-Z)</option>
+                            </select>
                         </div>
                     </div>
 
-                    <div class="p-5 flex flex-col flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <a href="{{ route('book.show', $book->id) }}" class="text-lg font-semibold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors hover:underline">
-                                {{ $book->title }}
-                            </a>
-                            <div class="flex items-center gap-1 text-yellow-500 text-sm font-bold">
-                                <span>★</span><span>{{ $book->rating }}</span>
-                            </div>
-                        </div>
-                        
-                        <p class="text-sm text-gray-500 mb-4">oleh <span class="text-gray-700">{{ $book->author }}</span></p>
+                    <div class="flex gap-3 w-full md:w-auto justify-end items-end h-full mt-auto">
+                        <a href="{{ route('home') }}" class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            Reset Filter
+                        </a>
+                        <a href="{{ route('book.export') }}" class="inline-flex items-center px-5 py-2.5 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition-colors shadow-sm transform hover:scale-105 duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Export CSV
+                        </a>
+                    </div>
+                </form>
+            </div>
 
-                        <div class="flex-grow mb-4">
-                            <p class="text-xs text-gray-400 italic line-clamp-2">"{{ $book->notes }}"</p>
-                        </div>
-
-                        <div class="pt-4 border-t border-gray-50 mt-auto flex flex-col gap-2">
+            {{-- Book Grid --}}
+            @if(isset($books) && $books->count() > 0)
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    @foreach($books as $book)
+                        <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full relative">
                             
-                            <div class="flex justify-between items-center mb-2 text-xs">
-                                @if($book->sentiment)
-                                    <span class="px-2 py-0.5 rounded text-white font-medium" 
-                                          style="background-color: {{ $book->sentiment == 'POSITIF' ? '#10B981' : ($book->sentiment == 'NEGATIF' ? '#EF4444' : '#6B7280') }};">
-                                        {{ $book->sentiment }}
-                                    </span>
+                            {{-- Cover Card --}}
+                            <div class="relative aspect-[2/3] overflow-hidden bg-gray-100 cursor-pointer" onclick="window.location='{{ route('book.show', $book->id) }}'">
+                                @if($book->cover_image)
+                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-500">
                                 @else
-                                    <span class="text-gray-300">Belum dianalisis</span>
+                                    <img src="https://covers.openlibrary.org/b/isbn/{{ $book->isbn }}-L.jpg" alt="{{ $book->title }}" class="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null;this.src='https://via.placeholder.com/250x350?text=No+Cover';">
                                 @endif
+                                
+                                <div class="absolute top-3 left-3">
+                                    <span class="px-2.5 py-1 text-xs font-bold bg-white/90 backdrop-blur-md text-gray-800 rounded-lg shadow-sm">
+                                        {{ $book->category ?? 'Umum' }}
+                                    </span>
+                                </div>
 
-                                <span class="{{ $book->stock > 0 ? 'text-green-600' : 'text-red-500' }} font-medium">
-                                    {{ $book->stock > 0 ? 'Stok: '.$book->stock : 'Habis' }}
-                                </span>
+                                {{-- Hover Overlay --}}
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                    <span class="text-white font-bold border-2 border-white px-4 py-2 rounded-lg">Lihat Detail</span>
+                                </div>
                             </div>
 
-                            @if(auth()->user()?->role == 'admin' || auth()->id() == $book->user_id)
-                                <div class="grid grid-cols-2 gap-2">
-                                    <a href="{{ route('book.edit', $book->id) }}" class="text-center py-2 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs rounded-lg transition-colors">Edit</a>
-                                    <form action="{{ route('book.delete', $book->id) }}" method="POST" class="w-full">
-                                        @csrf
-                                        @method('DELETE') 
-                                        <button type="submit" class="w-full py-2 px-3 bg-red-50 hover:bg-red-100 text-red-600 text-xs rounded-lg transition-colors" onclick="return confirm('Hapus?')">Hapus</button>
-                                    </form>
-                                </div>
-                                <a href="{{ route('book.show', $book->id) }}" class="block w-full text-center py-2 mt-2 border border-blue-500 text-blue-600 hover:bg-blue-50 text-xs font-medium rounded-lg transition-colors">
-                                    📖 Lihat Detail & Ulasan
-                                </a>
-                            @else
-                                @if($book->isBorrowed())
-                                    <button disabled class="w-full py-2 bg-gray-100 text-gray-400 text-xs font-medium rounded-lg cursor-not-allowed">Dipinjam</button>
-                                @elseif($book->stock > 0)
-                                    <form action="{{ route('book.borrow', $book->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="w-full py-2 bg-black hover:bg-gray-800 text-white text-xs font-medium rounded-lg transition-colors">Pinjam Buku</button>
-                                    </form>
-                                @else
-                                    <button disabled class="w-full py-2 bg-gray-100 text-gray-400 text-xs font-medium rounded-lg cursor-not-allowed">Stok Habis</button>
-                                @endif
-
-                                {{-- Section: Ulasan dari Pengguna Lain --}}
-                                @if($book->reviews->count() > 0)
-                                    <div class="mt-3 pt-3 border-t border-gray-100">
-                                        <p class="text-xs font-medium text-gray-700 mb-2">
-                                            <span class="text-yellow-500">★</span> Ulasan ({{ $book->reviews->count() }})
-                                        </p>
-                                        
-                                        {{-- Container ulasan (menggunakan x-data atau vanilla JS simple) --}}
-                                        <div id="reviews-container-{{ $book->id }}">
-                                            {{-- Tampilan Awal (Max 2) --}}
-                                            <div class="space-y-2 reviews-short">
-                                                @foreach($book->reviews->take(2) as $review)
-                                                    <div class="bg-gray-50 rounded-lg p-2">
-                                                        <div class="flex items-center justify-between mb-1">
-                                                            <span class="text-xs font-medium text-gray-700">{{ $review->user->name ?? 'Anonymous' }}</span>
-                                                            <div class="flex">
-                                                                @for($i=1; $i<=5; $i++)
-                                                                    <span class="text-[10px] {{ $i <= $review->rating ? 'text-yellow-500' : 'text-gray-300' }}">★</span>
-                                                                @endfor
-                                                            </div>
-                                                        </div>
-                                                        @if($review->comment)
-                                                            <p class="text-xs text-gray-500 line-clamp-2">{{ $review->comment }}</p>
-                                                        @endif
-                                                    </div>
-                                                @endforeach
-                                            </div>
-
-                                            {{-- Tampilan Penuh (Hidden by default) --}}
-                                            @if($book->reviews->count() > 2)
-                                                <div class="space-y-2 reviews-full hidden mt-2">
-                                                    @foreach($book->reviews->skip(2) as $review)
-                                                        <div class="bg-gray-50 rounded-lg p-2">
-                                                            <div class="flex items-center justify-between mb-1">
-                                                                <span class="text-xs font-medium text-gray-700">{{ $review->user->name ?? 'Anonymous' }}</span>
-                                                                <div class="flex">
-                                                                    @for($i=1; $i<=5; $i++)
-                                                                        <span class="text-[10px] {{ $i <= $review->rating ? 'text-yellow-500' : 'text-gray-300' }}">★</span>
-                                                                    @endfor
-                                                                </div>
-                                                            </div>
-                                                            @if($review->comment)
-                                                                <p class="text-xs text-gray-500">{{ $review->comment }}</p>
-                                                            @endif
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-
-                                                <button onclick="toggleReviews({{ $book->id }}, this, {{ $book->reviews->count() }})" class="text-xs text-blue-600 hover:underline mt-1 focus:outline-none">
-                                                    Lihat semua ulasan ({{ $book->reviews->count() }}) ↓
-                                                </button>
-                                            @endif
+                            {{-- Content --}}
+                            <div class="p-5 flex flex-col flex-grow">
+                                <div class="mb-3">
+                                    <a href="{{ route('book.show', $book->id) }}" class="text-lg font-bold text-gray-900 line-clamp-1 hover:text-blue-600 transition-colors">
+                                        {{ $book->title }}
+                                    </a>
+                                    <div class="flex items-center justify-between mt-1">
+                                        <p class="text-xs text-gray-500">oleh <span class="font-medium text-gray-700">{{ $book->author }}</span></p>
+                                        <div class="flex items-center gap-1 text-yellow-500 text-xs font-bold bg-yellow-50 px-1.5 py-0.5 rounded">
+                                            <span>★</span><span>{{ $book->rating }}</span>
                                         </div>
                                     </div>
-                                @endif
+                                </div>
 
-                                <button onclick="openReviewModal({{ $book->id }}, '{{ addslashes($book->title) }}')" class="w-full py-2 border border-gray-200 hover:border-gray-300 text-gray-600 text-xs font-medium rounded-lg transition-colors mt-2">
-                                    Beri Ulasan
-                                </button>
-                            @endif
+                                <div class="flex-grow mb-4">
+                                     @if($book->notes)
+                                        <p class="text-xs text-gray-400 italic line-clamp-2">"{{ $book->notes }}"</p>
+                                     @endif
+                                </div>
 
+                                {{-- Actions --}}
+                                <div class="pt-4 border-t border-gray-50 mt-auto flex flex-col gap-3">
+                                    
+                                    <div class="flex justify-between items-center text-xs font-medium">
+                                        @if($book->sentiment)
+                                            <span class="px-2 py-0.5 rounded text-white" 
+                                                  style="background-color: {{ $book->sentiment == 'POSITIF' ? '#10B981' : ($book->sentiment == 'NEGATIF' ? '#EF4444' : '#6B7280') }};">
+                                                {{ $book->sentiment }}
+                                            </span>
+                                        @else
+                                            <span class="text-gray-300">Belum dianalisis</span>
+                                        @endif
+
+                                        <span class="{{ $book->stock > 0 ? 'text-green-600' : 'text-red-500' }}">
+                                            {{ $book->stock > 0 ? 'Stok: '.$book->stock : 'Habis' }}
+                                        </span>
+                                    </div>
+
+                                    @if(auth()->check() && (auth()->user()->role == 'admin' || auth()->id() == $book->user_id))
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <a href="{{ route('book.edit', $book->id) }}" class="text-center py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg transition-colors">Edit</a>
+                                            <form action="{{ route('book.delete', $book->id) }}" method="POST" class="w-full">
+                                                @csrf
+                                                @method('DELETE') 
+                                                <button type="submit" class="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition-colors" onclick="return confirm('Hapus buku ini?')">Hapus</button>
+                                            </form>
+                                        </div>
+                                    @else
+                                        @if($book->isBorrowed())
+                                            <button disabled class="w-full py-2 bg-gray-100 text-gray-400 text-xs font-bold rounded-lg cursor-not-allowed">Sedang Dipinjam</button>
+                                        @elseif($book->stock > 0)
+                                            <form action="{{ route('book.borrow', $book->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="w-full py-2 bg-black hover:bg-gray-800 text-white text-xs font-bold rounded-lg transition-colors shadow-sm">Pinjam Buku</button>
+                                            </form>
+                                        @else
+                                            <button disabled class="w-full py-2 bg-gray-100 text-gray-400 text-xs font-bold rounded-lg cursor-not-allowed">Stok Habis</button>
+                                        @endif
+                                    @endif
+
+                                    {{-- Link Detail (Secondary Action) --}}
+                                    <a href="{{ route('book.show', $book->id) }}" class="block w-full text-center py-2 border border-blue-200 text-blue-600 hover:bg-blue-50 text-xs font-bold rounded-lg transition-colors">
+                                        Detail & Ulasan
+                                    </a>
+
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
-            @endforeach
-        </div>
-    @else
-        <div class="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
-            <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-            <p class="text-gray-500 text-lg">Tidak ada buku yang ditemukan.</p>
-            @auth
-                <a href="{{ route('book.add') }}" class="mt-2 text-black underline hover:text-gray-600">Tambah buku baru</a>
-            @endauth
-        </div>
-    @endif
-</div>
-
-<div id="reviewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeReviewModal()"></div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div class="sm:flex sm:items-start">
-                    <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Ulas Buku: <span id="modalBookTitle" class="font-bold"></span></h3>
-                        <div class="mt-4">
-                            <form action="{{ route('reviews.store') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="book_id" id="modalBookId">
-                                
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
-                                    <select name="rating" required class="w-full border-gray-300 rounded-md shadow-sm focus:border-black focus:ring-black sm:text-sm">
-                                        <option value="5">⭐⭐⭐⭐⭐ - Luar Biasa</option>
-                                        <option value="4">⭐⭐⭐⭐ - Bagus</option>
-                                        <option value="3">⭐⭐⭐ - Cukup</option>
-                                        <option value="2">⭐⭐ - Kurang</option>
-                                        <option value="1">⭐ - Buruk</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Komentar</label>
-                                    <textarea name="comment" rows="3" class="w-full border-gray-300 rounded-md shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="Bagikan pendapat Anda..."></textarea>
-                                </div>
-
-                                <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-                                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-black text-base font-medium text-white hover:bg-gray-800 focus:outline-none sm:col-start-2 sm:text-sm">
-                                        Kirim
-                                    </button>
-                                    <button type="button" onclick="closeReviewModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm">
-                                        Batal
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+            @else
+                <div class="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border border-dashed border-gray-300 text-center">
+                    <div class="p-6 bg-gray-50 rounded-full mb-4">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-900">Belum ada buku</h3>
+                    <p class="text-gray-500 mt-2 max-w-sm">Perpustakaan masih kosong atau tidak ada buku yang cocok dengan filter Anda.</p>
+                    @auth
+                        <a href="{{ route('book.add') }}" class="mt-6 inline-flex items-center px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Tambah Buku Baru
+                        </a>
+                    @endauth
                 </div>
-            </div>
+            @endif
         </div>
     </div>
-</div>
-
-<script>
-    function openReviewModal(bookId, bookTitle) {
-        document.getElementById('reviewModal').classList.remove('hidden');
-        document.getElementById('modalBookId').value = bookId;
-        document.getElementById('modalBookTitle').innerText = bookTitle;
-    }
-    function closeReviewModal() {
-        document.getElementById('reviewModal').classList.add('hidden');
-    }
-
-    function toggleReviews(bookId, btn, count) {
-        const container = document.getElementById('reviews-container-' + bookId);
-        const fullReviews = container.querySelector('.reviews-full');
-        
-        if (fullReviews.classList.contains('hidden')) {
-            fullReviews.classList.remove('hidden');
-            btn.innerText = 'Sembunyikan ulasan ↑';
-        } else {
-            fullReviews.classList.add('hidden');
-            btn.innerText = 'Lihat semua ulasan (' + count + ') ↓';
-        }
-    }
-</script>
-@endsection
+</x-app-layout>

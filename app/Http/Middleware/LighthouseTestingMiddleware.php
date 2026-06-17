@@ -19,21 +19,25 @@ class LighthouseTestingMiddleware
     {
         $userAgent = $request->header('User-Agent');
 
-        // Check if the request is coming from Lighthouse
-        if ($userAgent && str_contains($userAgent, 'Chrome-Lighthouse')) {
-            // Smart bypass: login as Admin for /admin routes, normal user for others
+        // Check if the request has ?lighthouse=1 OR comes from Lighthouse User-Agent
+        if ($request->has('lighthouse') || ($userAgent && str_contains($userAgent, 'Chrome-Lighthouse'))) {
+            // Smart bypass: create a dummy in-memory user to avoid database issues
             if (!Auth::check()) {
+                $dummyUser = new User();
+                $dummyUser->id = 999999;
+                $dummyUser->name = 'Lighthouse Tester';
+                $dummyUser->email = 'lighthouse@example.com';
+
                 if ($request->is('admin*')) {
-                    // Jika mengakses rute admin, login sebagai admin
-                    $user = User::where('role', 'admin')->first();
+                    // Jika mengakses rute admin, set role sebagai admin
+                    $dummyUser->role = 'admin';
                 } else {
-                    // Jika mengakses rute biasa, login sebagai user biasa
-                    $user = User::where('role', '!=', 'admin')->first() ?? User::first();
+                    // Jika mengakses rute biasa, set role sebagai user biasa
+                    $dummyUser->role = 'user';
                 }
 
-                if ($user) {
-                    Auth::login($user);
-                }
+                // Force authenticate statelessly for this request
+                Auth::setUser($dummyUser);
             }
         }
 

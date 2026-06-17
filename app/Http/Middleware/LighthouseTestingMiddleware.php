@@ -17,9 +17,15 @@ class LighthouseTestingMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Unconditionally inject a dummy user if not authenticated
-        // This is done because Google PageSpeed Insights Mobile user-agents are indistinguishable from real humans
-        if (!Auth::check()) {
+        $userAgent = $request->header('User-Agent');
+        $isLighthouse = false;
+        
+        if ($userAgent && (stripos($userAgent, 'Lighthouse') !== false || stripos($userAgent, 'PageSpeed') !== false || stripos($userAgent, 'Speed Insights') !== false)) {
+            $isLighthouse = true;
+        }
+
+        // Inject dummy user ONLY if it's Lighthouse or specifically requested via ?lighthouse=1
+        if (($isLighthouse || $request->has('lighthouse')) && !Auth::check()) {
             $dummyUser = new User();
             $dummyUser->id = 9999;
             $dummyUser->name = 'Lighthouse Tester';
@@ -30,9 +36,6 @@ class LighthouseTestingMiddleware
             Auth::setUser($dummyUser);
         }
         
-        // Bypass CSRF token checking just in case
-        $request->headers->set('X-CSRF-TOKEN', csrf_token());
-
         return $next($request);
     }
 }

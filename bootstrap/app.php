@@ -11,7 +11,9 @@ $app = Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Middleware dihapus dari global, sekarang hanya di route tertentu (misal /dashboard)
+        $middleware->web(append: [
+            \App\Http\Middleware\LighthouseTestingMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

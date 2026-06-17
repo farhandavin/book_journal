@@ -16,18 +16,20 @@ use App\Http\Controllers\ReviewController;
 */
 
 // --- Halaman Utama (Daftar Buku) ---
+
+
+
+
 Route::get('/', [BookController::class, 'index'])->name('home');
 Route::get('/book/{id}', [BookController::class, 'show'])->name('book.show');
 
-// --- Route Dashboard Bawaan Breeze (Bypass Auth for Lighthouse) ---
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware([\App\Http\Middleware\LighthouseTestingMiddleware::class])->name('dashboard');
-
-
-
 // --- Group Middleware Auth (Fitur untuk User Login) ---
 Route::middleware(['auth'])->group(function () {
+
+    // --- Route Dashboard Bawaan Breeze ---
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
     // 1. Route Fitur Buku (CRUD)
     Route::get('/add', [BookController::class, 'addForm'])->name('book.add');
